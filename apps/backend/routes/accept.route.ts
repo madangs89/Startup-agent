@@ -15,12 +15,29 @@ acceptRouter.post(
     try {
       const { plan } = req.body;
 
-      const { output: result, usage } = await agent.generate({
-        prompt: `You have accepted the plan: ${plan}. Please provide a summary of the next steps.`,
+      const {
+        output: result,
+        usage,
+        steps,
+      } = await agent.generate({
+        prompt: `Execution type: WORK.
+
+You have accepted the following startup plan:
+
+${plan}
+
+Execute the Founder Analysis now.
+
+Actually perform the work using the available tools.
+Do not just describe the next steps.`,
       });
 
       console.log(result);
       console.log(usage);
+      for (const step of steps) {
+        console.log("Tool calls:", step.toolCalls);
+        console.log("Tool results:", step.toolResults);
+      }
       return res
         .status(200)
         .json({ message: `Plan ${plan} accepted successfully` });
