@@ -7,7 +7,7 @@ interface AcceptRequestBody {
   plan: string;
 }
 
-const agent = new AgentBody("ollama").getAgent();
+const agent = new AgentBody("ollama", "").getAgent();
 
 acceptRouter.post(
   "/accept",
@@ -15,11 +15,12 @@ acceptRouter.post(
     try {
       const { plan } = req.body;
 
-      const result = await agent.generate({
+      const { output: result, usage } = await agent.generate({
         prompt: `You have accepted the plan: ${plan}. Please provide a summary of the next steps.`,
       });
 
       console.log(result);
+      console.log(usage);
       return res
         .status(200)
         .json({ message: `Plan ${plan} accepted successfully` });
